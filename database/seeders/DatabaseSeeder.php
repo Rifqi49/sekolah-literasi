@@ -26,14 +26,6 @@ class DatabaseSeeder extends Seeder
         | USERS
         |--------------------------------------------------------------------------
         */
-        // Admin
-        $admin = User::factory()
-            ->admin()
-            ->create([
-                'name' => 'Administrator',
-                'email' => 'admin@sekolahliterasi.test',
-            ]);
-
         $students = collect();
 
         $students->push(
@@ -344,11 +336,9 @@ class DatabaseSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        $this->command->info('==========================================');
+        $this->command->info('=========================================='); 
         $this->command->info(' SEKOLAH LITERASI - DATABASE SEEDED');
         $this->command->info('==========================================');
-        $this->command->info('Admin    : admin@sekolahliterasi.test');
-        $this->command->info('Password : password');
         $this->command->info('Students : ' . $students->count());
         $this->command->info('Books    : ' . $books->count());
         $this->command->info('Courses  : ' . $courses->count());
