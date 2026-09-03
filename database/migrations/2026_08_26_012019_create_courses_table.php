@@ -43,6 +43,8 @@ return new class extends Migration
 
             $table->index('status');
             $table->index('published_at');
+
+            $table->boolean('is_active')->default(true);
         });
     }
 

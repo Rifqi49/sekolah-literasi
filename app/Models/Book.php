@@ -12,34 +12,31 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Book extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'category_id',
         'title',
-        'slug',
-        'description',
-        'isbn',
+        'author',
         'publisher',
-        'publication_year',
+        'year',
+        'synopsis',
         'cover',
-        'file',
-        'status',
-        'views',
-        'published_at',
+        'stock',
+        'is_available',
     ];
 
     protected function casts(): array
     {
         return [
-            'published_at' => 'datetime',
-            'publication_year' => 'integer',
-            'views' => 'integer',
+            'year' => 'integer',
+            'stock' => 'integer',
+            'is_available' => 'boolean',
         ];
     }
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(BookCategory::class, 'category_id');
+        return $this->belongsTo(Category::class);
     }
 
     public function authors(): BelongsToMany
