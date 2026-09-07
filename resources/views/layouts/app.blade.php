@@ -61,15 +61,56 @@
                 </a>
 
             </div>
+            @auth
 
-            <a
-                href="/admin"
-                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-            >
+            <div class="flex items-center gap-4">
+
+                <a
+                    href="{{ route('student.dashboard') }}"
+                    class="text-sm font-medium text-slate-700 hover:text-blue-600"
+                >
+                    Dashboard
+                </a>
+
+                <span class="text-sm text-slate-500">
+                    {{ auth()->user()->name }}
+                </span>
+
+                <form
+                    action="{{ route('logout') }}"
+                    method="POST"
+                >
+                
+                    @csrf
+
+                    <button
+                        type="submit"
+                        class="text-sm font-semibold text-red-600 hover:text-red-700"
+                    >
+                    Logout
+                    </button>
+                </form>
+            </div>
+        @else
+
+            <div class="flex items-center gap-3">
+
+                <a
+                    href="{{ route('login') }}"
+                    class="text-sm font-semibold text-slate-700 hover:text-blue-600"
+                >
                 Login
-            </a>
+                </a>
 
-        </div>
+                <a
+                    href="{{ route('register') }}"
+                    class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                >
+                Daftar
+                </a>
+            </div>
+
+        @endauth
     </nav>
 
 
@@ -145,3 +186,4 @@
 
 </body>
 </html>
+

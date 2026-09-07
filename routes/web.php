@@ -3,6 +3,7 @@
 use App\Models\Book;
 use App\Models\BookCategory;
 use App\Models\Course;
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,7 +47,7 @@ Route::get('/books', function (Request $request) {
         ->paginate(12)
         ->withQueryString();
 
-    $categories = Category::orderBy('name')->get();
+    $categories = BookCategory::orderBy('name')->get();
 
     return view('books.index', compact(
         'books',
@@ -87,3 +88,68 @@ Route::get('/courses/{course}', function (Course $course) {
     return view('courses.show', compact('course'));
 
 })->name('courses.show');
+
+/*
+|--------------------------------------------------------------------------
+| AUTHENTICATION
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('guest')->group(function () {
+
+    Route::get('/login', [AuthController::class, 'showLogin'])
+        ->name('login');
+
+    Route::post('/login', [AuthController::class, 'login'])
+        ->name('login.store');
+
+    Route::get('/register', [AuthController::class, 'showRegister'])
+        ->name('register');
+
+    Route::post('/register', [AuthController::class, 'register'])
+        ->name('register.store');
+});
+
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| STUDENT
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/student/dashboard', function () {
+        return view('student.dashboard');
+    })->name('student.dashboard');
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| COURSE REGISTRATION - STUDENT
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::post(
+        '/courses/{course}/register',
+        [CourseRegistrationController::class, 'store']
+    )->name('courses.register');
+
+    Route::get(
+        '/student/courses',
+        [CourseRegistrationController::class, 'index']
+    )->name('student.courses');
+
+    Route::patch(
+        '/student/courses/{registration}/cancel',
+        [CourseRegistrationController::class, 'cancel']
+    )->name('student.courses.cancel');
+
+});

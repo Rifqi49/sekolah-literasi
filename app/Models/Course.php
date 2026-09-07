@@ -53,4 +53,10 @@ class Course extends Model
     {
         return $this->morphMany(Review::class, 'reviewable');
     }
+
+    public function isAvailable(): bool
+    {
+        return $this->is_active
+            && $this->registered_count < $this->quota;
+    }
 }
