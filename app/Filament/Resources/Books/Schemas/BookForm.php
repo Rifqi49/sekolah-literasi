@@ -1,93 +1,74 @@
 <?php
 
-namespace App\Filament\Resources\Books\Tables;
+namespace App\Filament\Resources\Books\Schemas;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
 
-class BooksTable
+class BookForm
 {
-    public static function configure(Table $table): Table
+    public static function configure(Schema $schema): Schema
     {
-        return $table
-            ->columns([
-                ImageColumn::make('cover')
-                    ->label('Cover')
-                    ->disk('public')
-                    ->square(),
+        return $schema
+            ->components([
 
-                TextColumn::make('title')
-                    ->label('Judul')
-                    ->searchable()
-                    ->sortable()
-                    ->limit(40),
-
-                TextColumn::make('category.name')
+                Select::make('category_id')
                     ->label('Kategori')
-                    ->badge()
-                    ->sortable(),
+                    ->relationship('category', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
 
-                TextColumn::make('authors.name')
+                TextInput::make('title')
+                    ->label('Judul Buku')
+                    ->required()
+                    ->maxLength(255),
+
+                TextInput::make('author')
                     ->label('Penulis')
-                    ->listWithLineBreaks()
-                    ->searchable(),
+                    ->required()
+                    ->maxLength(255),
 
-                TextColumn::make('publisher')
+                TextInput::make('publisher')
                     ->label('Penerbit')
-                    ->searchable()
-                    ->toggleable(),
+                    ->maxLength(255),
 
-                TextColumn::make('publication_year')
-                    ->label('Tahun')
-                    ->sortable(),
-
-                TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'published' => 'success',
-                        'draft' => 'warning',
-                        'archived' => 'gray',
-                        default => 'gray',
-                    }),
-
-                TextColumn::make('views')
-                    ->label('Dibaca')
+                TextInput::make('year')
+                    ->label('Tahun Terbit')
                     ->numeric()
-                    ->sortable(),
+                    ->minValue(1900)
+                    ->maxValue(date('Y')),
 
-                TextColumn::make('created_at')
-                    ->label('Dibuat')
-                    ->dateTime('d M Y')
-                    ->sortable(),
-            ])
-            ->filters([
-                SelectFilter::make('category_id')
-                    ->label('Kategori')
-                    ->relationship('category', 'name'),
+                Textarea::make('synopsis')
+                    ->label('Sinopsis')
+                    ->rows(5)
+                    ->columnSpanFull(),
 
-                SelectFilter::make('status')
-                    ->label('Status')
+                FileUpload::make('cover')
+                    ->label('Cover Buku')
+                    ->image()
+                    ->directory('books/covers')
+                    ->imageEditor(),
+
+                TextInput::make('stock')
+                    ->label('Stok')
+                    ->numeric()
+                    ->default(0)
+                    ->minValue(0)
+                    ->required(),
+
+                Select::make('is_available')
+                    ->label('Status Ketersediaan')
                     ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
-                        'archived' => 'Archived',
-                    ]),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                        true => 'Tersedia',
+                        false => 'Tidak Tersedia',
+                    ])
+                    ->default(true)
+                    ->required(),
+
             ]);
     }
 }
